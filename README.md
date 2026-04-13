@@ -1,4 +1,4 @@
-# Surf90Chigasaki (Streamlit Version)
+# chigasaki-beach-weather (Streamlit Version)
 
 茅ヶ崎ヘッドランド（Tバー）の波情報・天気・潮汐を表示するWebアプリです。
 Windows環境で動作確認を行い、iPhoneなどのスマートフォンからも利用可能です。
