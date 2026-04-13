@@ -62,12 +62,21 @@
             color: #d9534f;
             text-align: center;
         }
+        .current-time {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #555;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>🏖 茅ヶ崎ヘッドランド コンディション</h1>
+    
+    <div id="current-time" class="current-time"></div>
     
     <div id="loading" class="loading">最新のデータを取得中...</div>
     <div id="error" class="error" style="display: none;">データの取得に失敗しました。</div>
@@ -109,6 +118,16 @@
     // 茅ヶ崎ヘッドランド付近の緯度経度
     const LAT = 35.318;
     const LON = 139.410;
+
+    // データ取得時点の日付と時刻を表示する関数
+    function displayFetchTime() {
+        const now = new Date();
+        const options = { 
+            year: 'numeric', month: 'short', day: 'numeric', weekday: 'short', 
+            hour: '2-digit', minute: '2-digit', second: '2-digit' 
+        };
+        document.getElementById('current-time').textContent = "データ取得日時: " + now.toLocaleString('ja-JP', options);
+    }
 
     // 天気と風のデータを取得 (Open-Meteo API)
     const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current_weather=true&windspeed_unit=ms`;
@@ -247,6 +266,9 @@
             // ローディングを消してコンテンツを表示
             document.getElementById('loading').style.display = 'none';
             document.getElementById('weather-content').style.display = 'block';
+
+            // 取得完了時の時刻を表示
+            displayFetchTime();
 
         } catch (error) {
             console.error("Fetch error:", error);
