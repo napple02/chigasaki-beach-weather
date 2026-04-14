@@ -335,47 +335,86 @@ lang: ja
         ];
     }
 
-    // GitHub Actionsで自動生成されたJSONから満潮・干潮時間を取得する関数
     async function fetchTideExtremes() {
         const tideStatusEl = document.getElementById('tide-status');
-        
+        tideStatusEl.textContent = '読み込み中...';
+
+        // 今日の日付を YYYY-MM-DD 形式で取得 (日本時間ベース)
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const todayStr = `${year}-${month}-${day}`;
+
         try {
-            // プレビュー環境（blob:やfile:など）では相対URLのfetchがエラーになるためスキップする
+            // プレビュー・ローカル環境でのエラー回避
             if (!window.location.protocol.startsWith('http')) {
-                throw new Error("プレビュー環境またはローカル環境のため、tide_data.jsonの読み込みをスキップします。");
+                throw new Error("ローカル環境のためJSON読み込みをスキップします");
             }
 
-            // キャッシュ（古いデータ）を読み込まないよう、URLの末尾に現在の時間を付与して回避
-            const response = await fetch(`tide_data.json?t=${new Date().getTime()}`);
+            // --- STEP 1: まずは気象庁のデータ (tidedata.json) を試す ---
+            try {
+                const jmaResponse = await fetch(`tidedata.json?t=${now.getTime()}`);
+                if (jmaResponse.ok) {
+                    const allTideData = await jmaResponse.json();
+                    const todayTide = allTideData[todayStr];
 
-            if (!response.ok) {
-                // 初回実行時などでJSONファイルがまだ存在しない場合
-                throw new Error("潮汐データの読み込みに失敗しました");
+                    // 今日のデータがしっかり存在していれば表示して終了
+                    if (todayTide && todayTide.length > 0) {
+                        displayTideData(todayTide);
+                        updateTideSource("気象庁");
+                        return; // 成功したのでここで処理を抜ける
+                    }
+                }
+                // ファイルが無い、または今日のデータが無い場合はエラーを投げてSTEP2へ
+                throw new Error("気象庁データが見つからないか、本日の情報がありません");
+            } catch (jmaError) {
+                console.warn(jmaError.message + " -> Stormglassデータへフォールバックします");
             }
 
-            const data = await response.json();
+            // --- STEP 2: フォールバック (GitHub Actionsが生成した tide_data.json を試す) ---
+            const sgResponse = await fetch(`tide_data.json?t=${now.getTime()}`);
+            if (!sgResponse.ok) {
+                throw new Error("Stormglassデータ (tide_data.json) の読み込みにも失敗しました");
+            }
             
-            // データを表示
-            displayTideData(data.data);
+            const sgData = await sgResponse.json();
+            if (sgData && sgData.data) {
+                displayTideData(sgData.data);
+                updateTideSource("Stormglass");
+                return; // 成功したので処理を抜ける
+            } else {
+                throw new Error("Stormglassデータの形式が想定外です");
+            }
 
         } catch (error) {
-            console.warn(error.message); // エラーで画面を止めないよう警告レベルに変更
+            // --- STEP 3: 両方のファイルが読めなかった場合の最終手段 ---
+            console.error("すべてのデータ取得に失敗しました:", error);
             
-            // プレビュー環境でもグラフを確認できるようにダミーデータで描画
             const dummyData = getDummyTideExtremes();
             displayTideData(dummyData);
+            updateTideSource("取得失敗");
             
-            // ダミーデータであることを明記
             const container = document.getElementById('tide-extremes-container');
             const note = document.createElement('div');
             note.style.fontSize = '0.8rem';
-            note.style.color = '#d9534f';
+            note.style.color = '#c0392b';
             note.style.textAlign = 'right';
             note.style.marginTop = '5px';
-            note.textContent = '※プレビュー環境のためダミー波形を表示しています';
+            note.textContent = '※データ取得エラーのためダミー波形を表示しています';
             container.appendChild(note);
         }
     }
+
+    // 情報元の表記を動的に変更するヘルパー関数
+    function updateTideSource(sourceName) {
+        // "潮汐情報" の横にある span タグを取得してテキストを更新
+        const titleSpan = document.querySelector('.weather-box:nth-child(3) h2 span');
+        if (titleSpan) {
+            titleSpan.textContent = `（${sourceName}）`;
+        }
+    }
+
 
     let tideChartInstance = null; // グラフのインスタンス
 
