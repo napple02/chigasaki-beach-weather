@@ -34,7 +34,7 @@ https://surf90.github.io/chigasaki-beach-weather/
 * **天気予報**: 神奈川県東部（コード: `140010`）の予報区データを使用。
 
 
-## 🛠 開発者・管理者向け情報
+## 開発者・管理者向け情報
 <details>
 <summary><b>（クリックで展開）</b></summary>
 
