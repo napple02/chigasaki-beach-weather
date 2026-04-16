@@ -452,7 +452,7 @@ lang: ja
                 <span class="hero-card-label">🌊 波の高さ</span>
                 <div class="hero-value-group">
                     <span class="hero-card-value" id="hero-wave">--</span>
-                    <span class="hero-card-unit"> m</span>
+                    <span class="hero-card-unit">" "m</span>
                 </div>
             </div>
             <div class="hero-card" onclick="document.getElementById('marine-box').scrollIntoView({behavior:'smooth',block:'start'})" style="cursor:pointer;">
@@ -565,7 +565,7 @@ lang: ja
             hour: '2-digit', minute: '2-digit'
         };
         const el = document.getElementById('current-time');
-        el.innerHTML = `更新日時 : ${now.toLocaleString('ja-JP', options)} 🔄`;
+        el.innerHTML = `更新日時: ${now.toLocaleString('ja-JP', options)} 🔄`;
         el.onclick = () => fetchWeatherData();
     }
 
@@ -1121,7 +1121,7 @@ lang: ja
             if (weatherRes.status === 'fulfilled') {
                 const weatherData = weatherRes.value;
                 const temp = weatherData.current_weather.temperature;
-                document.getElementById('temp').textContent = `${temp} ℃`;
+                document.getElementById('temp').textContent = `${temp}℃`;
                 document.getElementById('wind').textContent = `${weatherData.current_weather.windspeed} m/s`;
                 document.getElementById('wind-dir').textContent = getWindDirection16(weatherData.current_weather.winddirection);
                 document.getElementById('hero-temp').textContent = temp;
@@ -1142,7 +1142,7 @@ lang: ja
                 // 海水温（取得できた場合）
                 if (marineData.current && marineData.current.sea_surface_temperature !== null && marineData.current.sea_surface_temperature !== undefined) {
                     const st = marineData.current.sea_surface_temperature;
-                    document.getElementById('sea-temp').textContent = `${st} ℃`;
+                    document.getElementById('sea-temp').textContent = `${st}℃`;
                     document.getElementById('hero-sea-temp').textContent = st;
                 } else {
                     document.getElementById('sea-temp').textContent = "データなし";
