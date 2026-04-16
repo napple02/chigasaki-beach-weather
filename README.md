@@ -14,7 +14,7 @@
 
 以下のURLにアクセスするだけで、いつでも最新の情報を確認できます。
 
-https://surf90.github.io/chigasaki-beach-weather/
+https://surf90.github.io/chigasaki-BOT/
 
 ## 参照している位置情報について
 
