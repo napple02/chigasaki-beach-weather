@@ -304,6 +304,9 @@ lang: ja
             letter-spacing: -0.28px;
             margin-top: 8px;
         }
+    #weather-content {
+        transition: opacity 0.3s ease;
+    }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -911,6 +914,12 @@ lang: ja
     }
 
     async function fetchWeatherData() {
+        const timeEl = document.getElementById('current-time');
+        if (timeEl.innerHTML !== '') {
+            timeEl.innerHTML = `データを更新中... ⏳`;
+            document.getElementById('weather-content').style.opacity = '0.5';
+            document.getElementById('weather-content').style.pointerEvents = 'none';
+        }
         try {
             // 潮回りの計算を実行
             await calculateTide();
@@ -963,6 +972,8 @@ lang: ja
             document.getElementById('weather-content').style.display = 'block';
 
             // 取得完了時の時刻を表示
+            document.getElementById('weather-content').style.opacity = '1';
+            document.getElementById('weather-content').style.pointerEvents = 'auto';
             _lastFetchTime = Date.now();
             displayFetchTime();
 
@@ -970,6 +981,11 @@ lang: ja
             console.error("Fetch error:", error);
             document.getElementById('loading').style.display = 'none';
             document.getElementById('error').style.display = 'block';
+            document.getElementById('weather-content').style.opacity = '1';
+            document.getElementById('weather-content').style.pointerEvents = 'auto';
+            if (timeEl.innerHTML.includes('更新中')) {
+                displayFetchTime();
+            }
         }
     }
 
