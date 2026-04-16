@@ -420,17 +420,17 @@ lang: ja
     <div id="weather-content" style="display: none;">
         <!-- ヒーローカード -->
         <div class="hero-cards">
-            <div class="hero-card">
+            <div class="hero-card" onclick="document.getElementById('marine-box').scrollIntoView({behavior:'smooth',block:'start'})" style="cursor:pointer;">
                 <span class="hero-card-label">🌊 波の高さ</span>
                 <span class="hero-card-value" id="hero-wave">--</span>
                 <span class="hero-card-unit">m</span>
             </div>
-            <div class="hero-card">
+            <div class="hero-card" onclick="document.getElementById('marine-box').scrollIntoView({behavior:'smooth',block:'start'})" style="cursor:pointer;">
                 <span class="hero-card-label">🌡 水温</span>
                 <span class="hero-card-value" id="hero-sea-temp">--</span>
                 <span class="hero-card-unit">℃</span>
             </div>
-            <div class="hero-card">
+            <div class="hero-card" onclick="document.getElementById('weather-current-box').scrollIntoView({behavior:'smooth',block:'start'})" style="cursor:pointer;">
                 <span class="hero-card-label">🌤 気温</span>
                 <span class="hero-card-value" id="hero-temp">--</span>
                 <span class="hero-card-unit">℃</span>
@@ -451,7 +451,7 @@ lang: ja
             <p class="note">※正確な潮位は<a href="https://www.data.jma.go.jp/kaiyou/db/tide/suisan/index.php" target="_blank">気象庁の潮位表（江の島）</a>等をご確認ください。</p>
         </div>
 
-        <div class="weather-box">
+        <div class="weather-box" id="marine-box">
             <h2>🌊 海面状況 <small>(予測)</small> <span style="font-size:11px; font-weight:400; color:#707070; letter-spacing:-0.28px;">（Open-Meteo）</span></h2>
             <div class="data-row"><span>波の高さ:</span> <span id="wave-height">-- m</span></div>
             <div class="data-row"><span>海水温:</span> <span id="sea-temp">-- ℃</span></div>
@@ -481,7 +481,7 @@ lang: ja
             <div id="jma-warning-error" style="display:none; color:#c0392b; font-size:14px;">注意報情報の取得に失敗しました。</div>
         </div>
 
-        <div class="weather-box">
+        <div class="weather-box" id="weather-current-box">
             <h2>🌡️ 現在の天気<small>（参考）</small> <span style="font-size:11px; font-weight:400; color:#707070; letter-spacing:-0.28px;">（Open-Meteo）</span></h2>
             <div class="data-row"><span>気温:</span> <span id="temp">-- ℃</span></div>
             <div class="data-row"><span>風速:</span> <span id="wind">-- m/s</span></div>
