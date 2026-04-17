@@ -491,7 +491,6 @@ function drawWaveCombinedChart(canvasId, existingInstance, data) {
         data: {
             datasets: [
                 {
-                    // 【修正】単位を追加
                     label: '最大波高 [m]',
                     data: heightData,
                     borderColor: '#0275d8', backgroundColor: '#0275d826',
@@ -500,7 +499,6 @@ function drawWaveCombinedChart(canvasId, existingInstance, data) {
                     pointHoverRadius: 6, fill: true, tension: 0.3, yAxisID: 'yWave',
                 },
                 {
-                    // 【修正】単位を追加
                     label: '周期 [秒]',
                     data: periodData,
                     borderColor: '#27ae60', backgroundColor: 'transparent',
@@ -520,7 +518,6 @@ function drawWaveCombinedChart(canvasId, existingInstance, data) {
                     position: 'top',
                     align: 'end',
                     labels: {
-                        // 【修正】アイコンを小さく、モダンな円形に設定
                         usePointStyle: true,
                         pointStyle: 'circle',
                         boxWidth: 8,
@@ -529,11 +526,12 @@ function drawWaveCombinedChart(canvasId, existingInstance, data) {
                             size: 11,
                             weight: '500'
                         },
-                        // 【修正】凡例の文字色をグラフの線の色に合わせる
+                        // 【修正】データセット本体の線の色（青・緑）を直接取得して文字色に適用
                         generateLabels: function(chart) {
                             const original = Chart.defaults.plugins.legend.labels.generateLabels(chart);
                             original.forEach(label => {
-                                label.fontColor = label.strokeStyle; 
+                                const dataset = chart.data.datasets[label.datasetIndex];
+                                label.fontColor = dataset.borderColor; 
                             });
                             return original;
                         }
