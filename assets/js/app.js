@@ -511,32 +511,13 @@ function drawWaveCombinedChart(canvasId, existingInstance, data) {
         options: {
             responsive: true, 
             maintainAspectRatio: false,
+            // 【追加】グラフエリア周辺の自動余白を最小化
+            layout: {
+                padding: 0
+            },
             interaction: { mode: 'index', intersect: false },
             plugins: {
-                legend: { 
-                    display: true,
-                    position: 'top',
-                    align: 'end',
-                    labels: {
-                        usePointStyle: true,
-                        pointStyle: 'circle',
-                        boxWidth: 8,
-                        boxHeight: 8,
-                        font: {
-                            size: 11,
-                            weight: '500'
-                        },
-                        // 【修正】データセット本体の線の色（青・緑）を直接取得して文字色に適用
-                        generateLabels: function(chart) {
-                            const original = Chart.defaults.plugins.legend.labels.generateLabels(chart);
-                            original.forEach(label => {
-                                const dataset = chart.data.datasets[label.datasetIndex];
-                                label.fontColor = dataset.borderColor; 
-                            });
-                            return original;
-                        }
-                    }
-                },
+                legend: { display: false },
                 tooltip: {
                     callbacks: {
                         title(items) {
@@ -571,6 +552,8 @@ function drawWaveCombinedChart(canvasId, existingInstance, data) {
                     type: 'linear', position: 'left',
                     title: { display: false },
                     ticks: { 
+                        // 【追加】ラベルとY軸の隙間を最小限（2px）にする
+                        padding: 2,
                         maxTicksLimit: 4, 
                         callback: v => v.toFixed(1) 
                     },
@@ -580,6 +563,8 @@ function drawWaveCombinedChart(canvasId, existingInstance, data) {
                     type: 'linear', position: 'right',
                     title: { display: false },
                     ticks: { 
+                        // 【追加】ラベルとY軸の隙間を最小限（2px）にする
+                        padding: 2,
                         maxTicksLimit: 4,
                         stepSize: 1, 
                         callback: v => Number.isInteger(v) ? v : null 
@@ -589,6 +574,41 @@ function drawWaveCombinedChart(canvasId, existingInstance, data) {
             }
         }
     });
+
+    // カスタムHTML凡例の生成と配置
+    let legendDiv = document.getElementById(canvasId + '-custom-legend');
+    if (!legendDiv) {
+        legendDiv = document.createElement('div');
+        legendDiv.id = canvasId + '-custom-legend';
+        legendDiv.style.cssText = 'display: flex; justify-content: space-between; font-size: 11px; font-weight: 500; margin-bottom: 8px;';
+        
+        const container = document.getElementById(canvasId).parentNode;
+        container.insertBefore(legendDiv, document.getElementById(canvasId));
+    }
+
+    window.toggleWaveDataset = function(index) {
+        const isVisible = chart.isDatasetVisible(index);
+        chart.setDatasetVisibility(index, !isVisible);
+        chart.update();
+        
+        const legendItem = document.getElementById(`wave-legend-item-${index}`);
+        if (legendItem) {
+            legendItem.style.opacity = isVisible ? '0.4' : '1';
+            legendItem.style.textDecoration = isVisible ? 'line-through' : 'none';
+        }
+    };
+
+    legendDiv.innerHTML = `
+        <div id="wave-legend-item-0" onclick="toggleWaveDataset(0)" style="display: flex; align-items: center; color: #0275d8; cursor: pointer; transition: 0.2s;">
+            <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #0275d8; margin-right: 5px;"></span>
+            最大波高 [m]
+        </div>
+        <div id="wave-legend-item-1" onclick="toggleWaveDataset(1)" style="display: flex; align-items: center; color: #27ae60; cursor: pointer; transition: 0.2s;">
+            <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #27ae60; margin-right: 5px;"></span>
+            周期 [秒]
+        </div>
+    `;
+
     return chart;
 }
 
