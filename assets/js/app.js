@@ -511,13 +511,13 @@ function drawWaveCombinedChart(canvasId, existingInstance, data) {
         options: {
             responsive: true, 
             maintainAspectRatio: false,
-            // 【追加】グラフエリア周辺の自動余白を最小化（X軸下のラベル用に下部のみ余白を確保）
+            // 【追加】グラフエリア周辺の自動余白を最小化（下部のみ潮汐グラフに合わせる）
             layout: {
                 padding: {
                     top: 0,
                     left: 0,
                     right: 0,
-                    bottom: 15 // ← ここで注釈を下に逃がす（10〜20あたりで微調整してください）
+                    bottom: 12 // 1枚目と同じくらいになるよう微調整
                 }
             },
             interaction: { mode: 'index', intersect: false },
